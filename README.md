@@ -9,7 +9,7 @@ user engagement trends** across India.
 
 The dashboard integrates:
 - **Data Processing & Storage**: Extracts and transforms JSON datasets.
-- **cleaning the dataset**
+  **cleaning the dataset** and pushing the datas to 
 into MySQL tables (`Data.py`).
 - **Interactive Visualizations**: Choropleth maps, bar/line charts, and
 tabular insights with **Plotly**.
