@@ -3,15 +3,16 @@
 ## 📌 Overview
 
 This project is a **Streamlit-based interactive dashboard** built using
-**PhonePe Pulse dataset**.\
+**PhonePe Pulse dataset**.
 It allows users to explore insights on **transactions, insurance, and
 user engagement trends** across India.
 
-The dashboard integrates:\
-- **Data Processing & Storage**: Extracts and transforms JSON datasets
-into MySQL tables (`Data.py`).\
+The dashboard integrates:
+- **Data Processing & Storage**: Extracts and transforms JSON datasets.
+- **cleaning the dataset**
+into MySQL tables (`Data.py`).
 - **Interactive Visualizations**: Choropleth maps, bar/line charts, and
-tabular insights with **Plotly**.\
+tabular insights with **Plotly**.
 - **Multi-page Navigation**: Home, Reports, User Analysis, and About
 sections with custom HTML/CSS.
 
@@ -20,10 +21,10 @@ sections with custom HTML/CSS.
 ## 🛠️ Tech Stack
 
 -   **Frontend**: [Streamlit](https://streamlit.io/)
-    **HTML/CSS**\
--   **Backend/DB**: MySQL (via `pymysql`)\
--   **Data Processing**: Python, Pandas, JSON\
--   **Visualization**: Plotly Express\
+    **HTML/CSS**
+-   **Backend/DB**: MySQL (via `pymysql`)
+-   **Data Processing**: Python, Pandas, JSON
+-   **Visualization**: Plotly Express
 -   Used **Scikit-learn** (MinMaxScaler in
     `UserAnalyse.py` to compare two individual columns that has huge numeric difference in simple form)
 
