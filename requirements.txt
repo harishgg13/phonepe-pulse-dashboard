@@ -1,0 +1,6 @@
+streamlit
+pandas
+pymysql
+plotly
+requests
+scikit-learn
