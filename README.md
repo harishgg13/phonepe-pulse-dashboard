@@ -32,11 +32,12 @@ sections with custom HTML/CSS.
 
 ## 📂 Project Structure
 
-    ├── Data.py            # Extracts PhonePe JSON data → Processes into Pandas → Inserts into MySQL
+    ├── Data.py            # Extracts PhonePe JSON data → Processes and Cleaning using Pandas → Inserts into MySQL
     ├── Home.py            # Streamlit Home Page (Transaction & Insurance Maps + Top States/Districts/Pincodes in  
                              interactive year and quarter changing option)
     ├── AnalysePage.py     # Streamlit Reports/Analysis page
     ├── UserAnalyse.py     # Streamlit User-Analysis page (Device usage, AppOpens vs Transactions, etc.)
+    ├── About.py
     ├── HTML_CSS.py        # Custom styling (Header, Footer, Layout, Tabs)
 
 ------------------------------------------------------------------------
