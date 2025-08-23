@@ -46,42 +46,42 @@ sections with custom HTML/CSS.
 
 ### 🔹 Data Processing (`Data.py`)
 
--   Reads **aggregated**, **map**, and **top-level** JSON datasets.\
+-   Reads **aggregated**, **map**, and **top-level** JSON datasets.
 -   Creates structured **MySQL tables** 
-    **Aggregated** - (`Aggr_transaction`,`Aggr_insurance`, `Aggr_user`,`Aggr_user_device`,).\
-    **Map**(`Map_transaction`, `Map_insurance`, `Map_user`).\
+    **Aggregated** - (`Aggr_transaction`,`Aggr_insurance`, `Aggr_user`,`Aggr_user_device`,).
+    **Map**(`Map_transaction`, `Map_insurance`, `Map_user`).
     **Top**(`Top_insurance_districts`, `top_insurance_pincodes`, `top_transaction_districts`,
-            `top_transaction_pincodes`, `top_user_districts`, `top_user_pincode`).\
+            `top_transaction_pincodes`, `top_user_districts`, `top_user_pincode`).
 -   Supports **insert/update sql query using python and automated**.
 
 ### 🔹 Home Page (`Home.py`)
 
 -   Choropleth maps for **transactions** & **insurance** across Indian
-    states.\
+    states.
 -   Top **states, districts, transaction types, and pincodes** by
-    volume.\
+    volume.
 -   Interactive filters by **Year** and **Quarter**.
 
 ### 🔹 Analysis Page (`AnalysisPage.py`) for report
 
 -   **Top/Least performing** states/districts/pincodes (Amount,Count
-    & Avg-amount-per-count).\
--   **Transaction Type trends** (Between each transaction type).\
--   **Transaction Trend State_wise** (time-series).\
+    & Avg-amount-per-count).
+-   **Transaction Type trends** (Between each transaction type).
+-   **Transaction Trend State_wise** (time-series).
 -   **Recent trends** (2024 vs Q4 2023).
 
 ### 🔹 User Analysis (`UserAnalyse.py`) for user insights
 
 -   **Top/Least performing** states/districts/pincodes (Registered Users
-    & Avg-App-Opens-per-registered-user).\
--   **Device usage trends** (state-wise & nationwide).\
--   **App Opens vs Transaction Count** (time-series).\
+    & Avg-App-Opens-per-registered-user).
+-   **Device usage trends** (state-wise & nationwide).
+-   **App Opens vs Transaction Count** (time-series).
 -   **Recent District-wise Analysis** (2024 vs Q4 2023 of recent market performance, transaction trend and district).
 
 ### 🔹 UI/UX Enhancements (`HTML_CSS.py`)
 
--   Custom header & footer with **branding**.\
--   Dynamic background colors (based on selected analysis).\
+-   Custom header & footer with **branding**.
+-   Dynamic background colors (based on selected analysis).
 -   Styled tabs & responsive layout.
 
 ------------------------------------------------------------------------
@@ -112,9 +112,9 @@ pip install -r requirements.txt
 
 ### 3️⃣ Setup MySQL Database
 
--   Create a database named `PhonePe`.\
+-   Create a database named `PhonePe`.
 -   Update MySQL credentials in `Data.py`, `Home.py`, and
-    `UserAnalyse.py`:\
+    `UserAnalyse.py`:
 
 ``` python
 connection = pymysql.connect(
@@ -137,8 +137,8 @@ streamlit run Home.py
 
 ## 📊 Example Dashboard
 
--   **Home Page** → Transaction/Insurance trends with choropleth map\
--   **Reports Page** → Deep dive into transaction datasets\
+-   **Home Page** → Transaction/Insurance trends with choropleth map
+-   **Reports Page** → Deep dive into transaction datasets
 -   **User Analysis Page** → Device usage, engagement dynamics,
     top/least performing regions
 
@@ -146,6 +146,6 @@ streamlit run Home.py
 
 ## 👨‍💻 Author
 
-**G G Harish**\
-- 📧 Email: <harishgg03@gmail.com>\
+**G G Harish**
+- 📧 Email: <harishgg03@gmail.com>
 - 💼 LinkedIn: [harishgg13](https://www.linkedin.com/in/ggharish13)
