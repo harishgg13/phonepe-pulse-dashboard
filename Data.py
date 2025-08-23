@@ -54,14 +54,7 @@ aggr_transation=pd.DataFrame(aggr_transaction_Dict)
 print(aggr_transation)
 # print(aggr_transation['amount'].head())
 
-#extracting values from DF
-# Aggr_Df_values = [tuple(x if not hasattr(x, 'item') else x.item() for x in row) for row in aggr_transation.values]
-# print(Aggr_Df_values[1])
-# print(type(Aggr_Df_values[1]))
-
-
 aggr_transaction_values=aggr_transation.values
-# print(type(aggr_transaction_values))
 try:
     #establishing connection
     connection=pymysql.connect(
@@ -76,7 +69,6 @@ try:
     create_table_name="Aggr_transation"
     attributes_for_table="State varchar(100),Year int, Quarter int,Name varchar(100),Count int, Amount float"
     # calling_create_table=create_table(cursor,connection,create_table_name,attributes_for_table)
-    # print(calling_create_table)
 
     #altering the table data type
     # modify_query=f"alter table {create_table_name} modify amount decimal(20,2);"
@@ -86,8 +78,7 @@ try:
     # insert Table
     for i in range(len(aggr_transaction_values)):
         values_from_df=tuple(aggr_transaction_values[i])
-        insert_into_table="(State, Year, Quarter, Name, Count, Amount) values (%s,%s,%s,%s,%s,%s)"
-        # print(values_from_df)
+        insert_into_table="(State, Year, Quarter, Name, Count, Amount) values (%s,%s,%s,%s,%s,%s)" 
         # calling_insert=insert_values(cursor,connection,create_table_name,insert_into_table,values_from_df)
 
 except Exception as e:
@@ -114,7 +105,6 @@ for i in aggr_state_list:
             data=open(p_k,"r")
             d=json.load(data)
             for z in d["data"]["transactionData"]:
-                # print(z)
                 count=z["paymentInstruments"][0]["count"]
                 amount=z["paymentInstruments"][0]["amount"]
                 aggr_insurance_Dict["state"].append(i)
@@ -123,17 +113,13 @@ for i in aggr_state_list:
                 aggr_insurance_Dict["count"].append(count)
                 aggr_insurance_Dict["amount"].append(amount)
 aggr_insurance=pd.DataFrame(aggr_insurance_Dict)
-# print(aggr_insurance) #to check the insurance dataframe
-
 aggr_Insurance_values=aggr_insurance.values
-# print(type(aggr_transaction_values))
 try:
 
     # create table
     create_table_name="Aggr_Insurance"
     attributes_for_table="State varchar(100),Year int, Quarter int,Count bigint, Amount decimal(20,2)"
     # calling_create_table=create_table(cursor,connection,create_table_name,attributes_for_table)
-    # print(calling_create_table)
 
     #altering the table data type
     # modify_query=f"alter table {create_table_name} modify amount decimal(20,2);"
@@ -144,7 +130,6 @@ try:
     for i in range(len(aggr_Insurance_values)):
         values_from_df=tuple(aggr_Insurance_values[i])
         insert_into_table="(State, Year, Quarter, Count, Amount) values (%s,%s,%s,%s,%s)"
-        # print(values_from_df)
         # calling_insert=insert_values(cursor,connection,create_table_name,insert_into_table,values_from_df)
 
 except Exception as e:
@@ -204,7 +189,6 @@ try:
     create_table_name="Aggr_user_device"
     attributes_for_table="State varchar(100),Year int, Quarter int, registeredUsers bigint, appOpens bigint"
     # calling_create_table=create_table(cursor,connection,create_table_name,attributes_for_table)
-    # print(calling_create_table)
 
     #altering the table data type
     # modify_query=f"alter table {create_table_name} modify amount decimal(20,2);"
@@ -215,7 +199,6 @@ try:
     for i in range(len(aggr_user_device_values)):
         values_from_df=tuple(aggr_user_device_values[i])
         insert_into_table="(State, Year, Quarter, Device, Count,Percentage) values (%s,%s,%s,%s,%s,%s)"
-        # print(values_from_df)
         calling_insert=insert_values(cursor,connection,create_table_name,insert_into_table,values_from_df)
 
 except Exception as e:
@@ -242,10 +225,8 @@ for i in map_state_list:
     for j in map_transaction_year:
         p_j=p_i+j+"/"
         map_transaction_quarter=os.listdir(p_j)
-        # print(aggr_transation_quarter)
         for k in map_transaction_quarter:
             p_k=p_j+k
-            # print(p_k)
             map_transaction_data=open(p_k,"r")
             d=json.load(map_transaction_data)
             for z in d["data"]["hoverDataList"]:
@@ -260,7 +241,6 @@ for i in map_state_list:
                 map_transaction_dict["amount"].append(map_tran_amount)
 
 map_transaction = pd.DataFrame(map_transaction_dict)
-# print(map_transaction)
 map_transaction_value=map_transaction.values
 
 try:
@@ -269,7 +249,6 @@ try:
     create_table_name="Map_Transation"
     attributes_for_table="State varchar(100),Year int, Quarter int,District_Name varchar(100),Count bigint, Amount decimal(25,2)"
     # calling_create_table=create_table(cursor,connection,create_table_name,attributes_for_table)
-    # print(calling_create_table)
 
     #altering the table data type
     # modify_query=f"alter table {create_table_name} modify amount decimal(20,2);"
@@ -280,7 +259,6 @@ try:
     for i in range(len(map_transaction_value)):
         values_from_df=tuple(map_transaction_value[i])
         insert_into_table="(State, Year, Quarter, District_Name, Count, Amount) values (%s,%s,%s,%s,%s,%s)"
-        # print(values_from_df)
         # calling_insert=insert_values(cursor,connection,create_table_name,insert_into_table,values_from_df)
 
 except Exception as e:
@@ -300,10 +278,8 @@ for i in map_state_list:
     for j in map_insurance_year:
         p_j=p_i+j+"/"
         map_insurance_quarter=os.listdir(p_j)
-        # print(aggr_transation_quarter)
         for k in map_insurance_quarter:
             p_k=p_j+k
-            # print(p_k)
             map_insurance_data=open(p_k,"r")
             d=json.load(map_insurance_data)
             for z in d["data"]["hoverDataList"]:
@@ -318,7 +294,6 @@ for i in map_state_list:
                 map_insurance_dict["amount"].append(map_tran_amount)
 
 map_insurance = pd.DataFrame(map_insurance_dict)
-# print(map_insurance)
 map_insurance_value=map_insurance.values
 
 try:
@@ -327,7 +302,6 @@ try:
     create_table_name="Map_Insurance"
     attributes_for_table="State varchar(100),Year int, Quarter int,District_Name varchar(100),Count bigint, Amount decimal(25,2)"
     # calling_create_table=create_table(cursor,connection,create_table_name,attributes_for_table)
-    # print(calling_create_table)
 
     #altering the table data type
     # modify_query=f"alter table {create_table_name} modify amount decimal(20,2);"
@@ -338,7 +312,6 @@ try:
     for i in range(len(map_insurance_value)):
         values_from_df=tuple(map_insurance_value[i])
         insert_into_table="(State, Year, Quarter, District_Name, Count, Amount) values (%s,%s,%s,%s,%s,%s)"
-        # print(values_from_df)
         # calling_insert=insert_values(cursor,connection,create_table_name,insert_into_table,values_from_df)
 
 except Exception as e:
@@ -358,10 +331,8 @@ for i in map_state_list:
     for j in map_user_year:
         p_j=p_i+j+"/"
         map_user_quarter=os.listdir(p_j)
-        # print(aggr_transation_quarter)
         for k in map_user_quarter:
             p_k=p_j+k
-            # print(p_k)
             map_user_data=open(p_k,"r")
             d=json.load(map_user_data)
             z = d["data"]["hoverData"]
@@ -376,7 +347,6 @@ for i in map_state_list:
                 map_user_dict["appOpens"].append(map_user_app_open)
 
 map_user=pd.DataFrame(map_user_dict)
-# print(map_user)
 map_user_values=map_user.values
 
 try:
@@ -385,7 +355,6 @@ try:
     create_table_name="Map_user"
     attributes_for_table="State varchar(100),Year int, Quarter int,District_Name varchar(100),registeredUsers bigint, appOpens bigint"
     # calling_create_table=create_table(cursor,connection,create_table_name,attributes_for_table)
-    # print(calling_create_table)
 
     #altering the table data type
     # modify_query=f"alter table {create_table_name} modify amount decimal(20,2);"
@@ -396,7 +365,6 @@ try:
     for i in range(len(map_user_values)):
         values_from_df=tuple(map_user_values[i])
         insert_into_table="(State, Year, Quarter, District_Name, registeredUsers, appOpens) values (%s,%s,%s,%s,%s,%s)"
-        # print(values_from_df)
         # calling_insert=insert_values(cursor,connection,create_table_name,insert_into_table,values_from_df)
 
 except Exception as e:
@@ -432,7 +400,6 @@ for i in Top_state_list:
             top_transaction_data=open(p_k,"r")
             d=json.load(top_transaction_data)
             for z in d["data"]["pincodes"]:
-                # print(z)
                 pincode=z["entityName"]
                 count=z["metric"]["count"]
                 amount=z["metric"]["amount"]
@@ -443,7 +410,6 @@ for i in Top_state_list:
                 top_transaction_dict["amount"].append(amount)
                 top_transaction_dict["count"].append(count)
             for x in d["data"]["districts"]:
-                # print(z)
                 Districts=x["entityName"]
                 count=x["metric"]["count"]
                 amount=x["metric"]["amount"]
@@ -455,11 +421,9 @@ for i in Top_state_list:
                 top_transaction_district_dict["count"].append(count)
 
 top_transaction=pd.DataFrame(top_transaction_dict)
-# print(top_transaction)
 top_transaction_value=top_transaction.values
 
 top_transaction_district=pd.DataFrame(top_transaction_district_dict)
-# print(top_transaction_district)
 top_transaction_district_value=top_transaction_district.values
 
 try:
@@ -468,7 +432,6 @@ try:
     create_table_name="top_transaction_pincodes"
     attributes_for_table="State varchar(100),Year int, Quarter int,Pincode int,count bigint, amount decimal(30,2)"
     # calling_create_table=create_table(cursor,connection,create_table_name,attributes_for_table)
-    # print(calling_create_table)
 
     #altering the table data type
     # modify_query=f"alter table {create_table_name} modify amount decimal(30,2);"
@@ -479,7 +442,6 @@ try:
     for i in range(len(top_transaction_value)):
         values_from_df=tuple(top_transaction_value[i])
         insert_into_table="(State, Year, Quarter, Pincode, count, amount) values (%s,%s,%s,%s,%s,%s)"
-        # print(values_from_df)
         # calling_insert=insert_values(cursor,connection,create_table_name,insert_into_table,values_from_df)
 
 except Exception as e:
@@ -531,11 +493,9 @@ for i in Top_state_list:
 
 
 top_isurance=pd.DataFrame(top_insurance_dict)
-# print(top_isurance)
 top_insurance_value=top_isurance.values
 
 top_isurance_district=pd.DataFrame(top_insurance_District_dict)
-# print(top_isurance_district)
 top_insurance_district_value=top_isurance_district.values
 
 try:
@@ -544,7 +504,6 @@ try:
     create_table_name="top_insurance_pincodes"
     attributes_for_table="State varchar(100),Year int, Quarter int,Pincode int,count bigint, amount bigint"
     # calling_create_table=create_table(cursor,connection,create_table_name,attributes_for_table)
-    # print(calling_create_table)
 
     #altering the table data type
     # modify_query=f"alter table {create_table_name} modify amount decimal(30,2);"
@@ -555,7 +514,6 @@ try:
     for i in range(len(top_insurance_value)):
         values_from_df=tuple(top_insurance_value[i])
         insert_into_table="(State, Year, Quarter, Pincode, count, amount) values (%s,%s,%s,%s,%s,%s)"
-        # print(values_from_df)
         # calling_insert=insert_values(cursor,connection,create_table_name,insert_into_table,values_from_df)
 
 except Exception as e:
@@ -606,11 +564,9 @@ for i in Top_state_list:
 
 
 top_user=pd.DataFrame(top_user_dict)
-# print(top_user)
 top_user_value=top_user.values
 
 top_user_district=pd.DataFrame(top_user_district_dict)
-# print(top_user_district)
 top_user_district_value=top_user_district.values
 
 
@@ -621,7 +577,6 @@ try:
     create_table_name="Top_User"
     attributes_for_table="State varchar(100),Year int, Quarter int,Pincode int,Registered_user bigint"
     # calling_create_table=create_table(cursor,connection,create_table_name,attributes_for_table)
-    # print(calling_create_table)
 
     #altering the table data type
     # modify_query=f"alter table {create_table_name} modify amount decimal(20,2);"
@@ -632,7 +587,6 @@ try:
     for i in range(len(top_user_value)):
         values_from_df=tuple(top_user_value[i])
         insert_into_table="(State, Year, Quarter, Pincode, Registered_user) values (%s,%s,%s,%s,%s)"
-        # print(values_from_df)
         # calling_insert=insert_values(cursor,connection,create_table_name,insert_into_table,values_from_df)
 
 except Exception as e:
