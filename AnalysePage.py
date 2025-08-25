@@ -5,6 +5,7 @@ import plotly.express as px
 import json
 import requests
 from sklearn.preprocessing import MinMaxScaler
+import plotly.graph_objects as go
 from HTML_CSS import page2,page2_content,page2_footer,page2_tab_color,page2_analyse_title
 
 connection=pymysql.connect(
@@ -143,22 +144,22 @@ def Analyse_chart(table_name,column_name,choice,var,choose,where):
 # --------------------------------------------------------------------------------------------------------------------------------------
 
 
-def recent_transaction_count():
+def recent_transaction_count(choice):
     for i in ["<",">"]:
         query_q_3=f"""with ac as (SELECT 
-    state,transaction_type,year,round(avg(count),2) as Avg_count
+    state,transaction_type,year,round(avg({choice}),2) as Avg_{choice}
     FROM 
     aggr_transaction where year=2024 group by state,transaction_type,year),
-    cd as (select state,transaction_type,count from aggr_transaction where year = 2023 and quarter = 4)
+    cd as (select state,transaction_type,{choice} from aggr_transaction where year = 2023 and quarter = 4)
     SELECT 
     ac.state,
     ac.transaction_type,
-    ROUND(100*((ac.avg_count-cd.count)/cd.count), 2) AS percentage
+    ROUND(100*((ac.avg_{choice}-cd.{choice})/cd.{choice}), 2) AS percentage
     FROM 
     ac 
     JOIN 
     cd ON ac.state = cd.state AND ac.transaction_type = cd.transaction_type 
-    where ROUND(100 * ((ac.avg_count-cd.count) / cd.count), 2) {i} 0 order by percentage;"""
+    where ROUND(100 * ((ac.avg_{choice}-cd.{choice}) / cd.{choice}), 2) {i} 0 order by percentage;"""
         cursor.execute(query_q_3)
         q_3 = pd.read_sql(query_q_3, connection)
         df_q_3=pd.DataFrame(q_3)
@@ -223,10 +224,12 @@ with st.sidebar:
     add_radio1 = st.radio(label="Transaction and Insurance Analysis",
                           options=("Top/Least performing", 
                                    "Transaction_Type Trends",
-                                   "Transaction Trends State_Wise",
+                                   "Transaction Trends State_Wise","Insurance Trends State_Wise",
                                    "Insurance-Transaction Trends",
                                    "Recent Trends")
     )
+
+# --------------------------------------------------------------------------------------------------------------------------------------
 
 if add_radio1=="Top/Least performing":
     call_home=page2_analyse_title("Performance Insights")
@@ -325,11 +328,10 @@ if add_radio1=="Top/Least performing":
 
 
 #----------------------------------------------------------------------------------------------------------------------
+state_value_cap_AOI=state_value_cap.copy()
+state_value_cap_AOI.insert(0,"ALL OVER INDIA")
 
 if add_radio1=="Transaction_Type Trends":
-        state_value_cap_AOI=state_value_cap
-        state_value_cap_AOI.insert(0,"ALL OVER INDIA")
-
         cate1s=st.selectbox("",state_value_cap_AOI,index=0)
         col1,col2,col3=st.columns([1,1,1])
         year1=[2018,2019,2020,2021,2022,2023,2024]
@@ -371,19 +373,26 @@ if add_radio1=="Transaction_Type Trends":
         q_7 = pd.read_sql(query_q_7, connection)
         df=pd.DataFrame(q_7)
         df["Quarter"]=df["Year"].astype(str)+"q"+df["Quarter"].astype(str)
+        df.sort_values(by="Transaction_type",ascending=True)
         if cate:
             fig7=px.line(df,
                         x="Quarter",
                         y=f"{cate}",
                         color="Transaction_type",
                         markers=False)
+            
+            fig7_2= go.Figure(data=[go.Pie(labels=df["Transaction_type"], values=df[f"{cate}"], pull=[0, 0.1, 0.2, 0.3,0.4])])
+
 
         call_tab_color=page2_tab_color()
         print(call_tab_color)
         tab1, tab2 = st.tabs(["Chart", "Data"])
         pd.set_option('display.float_format', '{:.2f}'.format)
         with tab1:
+            col1,col2=st.columns([1,1])
             st.plotly_chart(fig7)
+            st.plotly_chart(fig7_2)
+
         tab2.write(df)
 
 #----------------------------------------------------------------------------------------------------------------------
@@ -430,14 +439,18 @@ if add_radio1=="Recent Trends":
     call_home=page2_analyse_title("PhonePe Recent Trends")
     Content_text="In the recent trend analysis, we calculate the average value for 2024 and compare it with the 4th quarter of 2023 by taking the difference."
     page2_content(Content_text,side_text="left",color="#ffffff")
-    a_choice=st.selectbox("",["Recent Market Performance",
+    a_choice=st.selectbox("",["Recent Market Performance in Count",
                               "District Trends",
                               "Transaction_Type Trends"
                               ],
                               index=0)
 
-    if a_choice=="Recent Market Performance":
-        calling_transaction_count=recent_transaction_count()
+#------x------     
+
+    if a_choice=="Recent Market Performance in Count":
+        a_1_choice=st.radio("",["Amount","Count"],index=0,horizontal=True)
+        calling_transaction_count=recent_transaction_count(a_1_choice)
+
 #------x------     
 
     if a_choice=="District Trends":
@@ -472,10 +485,11 @@ from q23_4 join avg_24 on q23_4.transaction_type=avg_24.transaction_type;"""
             
 #----------------------------------------------------------------------------------------------------------------------
 
-if add_radio1=="Transaction Trends State_Wise":
-        state_select=st.selectbox("",state_value_cap,index=0)
+if add_radio1=="Transaction Trends State_Wise" or add_radio1=="Insurance Trends State_Wise":
+        column_name="aggr_transaction" if add_radio1=="Transaction Trends State_Wise" else "aggr_Insurance"
+        state_select=st.selectbox("",state_value_cap_AOI,index=0)
         col1,col2,col3=st.columns([1,1,1])
-        year1=[2018,2019,2020,2021,2022,2023,2024]
+        year1=[2018,2019,2020,2021,2022,2023,2024] if add_radio1=="Transaction Trends State_Wise" else [2020,2021,2022,2023,2024]
 
         with col1:
             cate2=st.selectbox("",["Amount","Count","Average"],index=0)
@@ -487,13 +501,21 @@ if add_radio1=="Transaction Trends State_Wise":
             Y2_choice=st.selectbox("",year2get,index=0,key="B")
 
         if cate2!="Average":
-            query_q_10=f"""select Year,Quarter,sum(amount) as Amount,sum(count) as Count from aggr_transaction 
+            query_q_10=f"""select Year,Quarter,sum(amount) as Amount,sum(count) as Count from {column_name} 
                         where year>={Y1_choice} and year<={Y2_choice} and State="{state_select}"
+                        group by Year,Quarter 
+                        order by Year,Quarter;""" if state_select!="ALL OVER INDIA" else f"""select Year,Quarter,sum(amount) as Amount,
+                        sum(count) as Count from {column_name} 
+                        where year>={Y1_choice} and year<={Y2_choice}
                         group by Year,Quarter 
                         order by Year,Quarter;"""
         else:
-            query_q_10=f"""select Year,Quarter,sum(amount)/sum(count) as Average from aggr_transaction 
+            query_q_10=f"""select Year,Quarter,sum(amount)/sum(count) as Average from {column_name} 
                         where year>={Y1_choice} and year<={Y2_choice} and State="{state_select}"
+                        group by Year,Quarter 
+                        order by Year,Quarter;""" if state_select!="ALL OVER INDIA" else f"""select Year,Quarter,
+                        sum(amount)/sum(count) as Average from {column_name} 
+                        where year>={Y1_choice} and year<={Y2_choice}
                         group by Year,Quarter 
                         order by Year,Quarter;"""
             
@@ -501,6 +523,10 @@ if add_radio1=="Transaction Trends State_Wise":
         q_10 = pd.read_sql(query_q_10, connection)
         df_10=pd.DataFrame(q_10)
         df_10["Quarter"]=df_10["Year"].astype(str)+"q"+df_10["Quarter"].astype(str)
+        try:
+            df_10['Amount'] = df_10['Amount'].map('{:,.2f}'.format)
+        except:
+            pass
         if cate2:
             fig10=px.line(df_10,
                         x="Quarter",
@@ -509,7 +535,6 @@ if add_radio1=="Transaction Trends State_Wise":
 
         call_tab_color=page2_tab_color()
         tab1, tab2 = st.tabs(["Chart", "Data"])
-        pd.set_option('display.float_format', '{:.2f}'.format)
         with tab1:
             st.plotly_chart(fig10)
         tab2.write(df_10)

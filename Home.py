@@ -4,7 +4,7 @@ import pymysql
 import plotly.express as px
 import json
 import requests
-from HTML_CSS import page1_home,page1_title,page1_footer
+from HTML_CSS import page1_home,page1_title,page1_footer,move_text
 
 connection=pymysql.connect(
 host="localhost",
@@ -179,9 +179,17 @@ def map_change_transaction(tab_name, where_clause):
     top_10_district=top_10_district.sort_values(by="Amount",ascending=False,ignore_index=True).head(5)
     top10 = df.sort_values(by="Amount", ascending=False,ignore_index=True).head(5)
     top_10_pincode=top_10_pincode.sort_values(by="Amount", ascending=False,ignore_index=True).head(5)
-    return top10,top_10_district,top_transaction_type,top_10_pincode
 
-    
+#     content_text = f"""
+# <span style="color:#673AB7;">Total Transaction Value :</span> 
+# <span style="color:#FFC107;">{df['Amount'].sum()}</span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp
+# <span style="color:#673AB7;">Total Count Of Transaction :</span> 
+# <span style="color:#FFC107;">{int(df['Count'].sum())}</span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp
+# <span style="color:#673AB7;">Average Amount Per Transation :</span> 
+# <span style="color:#FFC107;">{round(df['Amount'].sum()/int(df['Count'].sum()),2)}</span>
+# """
+#     move_text(content_text)
+    return top10,top_10_district,top_transaction_type,top_10_pincode
 
 #--------------------------------------------------------------------------------------------------------------
 

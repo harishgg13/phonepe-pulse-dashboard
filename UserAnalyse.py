@@ -215,7 +215,7 @@ def district_analyse_chart(State_name):
 and state="{State_name}"
 order by state,year),
 avg_24 as(
-select state,year,district_name,round(avg(registeredUsers),2) as RU_24 ,round(avg(appOpens),2) as AO_24 from map_user where year=2024
+select state,year,district_name,round(sum(registeredUsers)/4,2) as RU_24 ,round(sum(appOpens)/4,2) as AO_24 from map_user where year=2024
 and state="{State_name}"
 group by district_name,state,year order by state,year)
 select q23_4.district_name,q23_4.RU_23 as RU_Y23_Q4,avg_24.RU_24 as RU_AVG_2024,
@@ -252,11 +252,13 @@ from q23_4 join avg_24 on q23_4.district_name=avg_24.district_name;"""
 with st.sidebar:
     add_radio1 = st.radio(label="User Analysing",
                           options=("Top/Least User Performance", 
-                                   "Device Usage State-wise",
+                                   "Device Usage State-wise","User Trend",
                                    "Recent User-Engagement Analyse District-Wise",
                                    "AppOpens vs Transaction Count"
                                    )
     )
+
+# --------------------------------------------------------------------------------------------------------------------------------------
 
 if add_radio1=="Top/Least User Performance":
     call_home=page2_analyse_title("Top/Least performing")
@@ -339,7 +341,20 @@ state_value_cap_AOI=state_value_cap.copy()
 state_value_cap_AOI.insert(0,"ALL OVER INDIA")
 
 if add_radio1=="Device Usage State-wise":
-    call_home=page2_analyse_title("State-wise Device Usage in Phonepe")
+    call_home=page2_analyse_title("Top Brands PhonePe Usage")
+    col1,col2,col3,col4,col5=st.columns([1,1,1,1,1])
+    
+    with col1:
+        st.image("https://upload.wikimedia.org/wikipedia/commons/a/ae/Xiaomi_logo_%282021-%29.svg",width=100)
+    with col2:
+        st.image("https://cdn.freebiesupply.com/logos/large/2x/vivo-1-logo-png-transparent.png",width=100)
+    with col3:
+        st.image("https://static.vecteezy.com/system/resources/previews/020/927/451/non_2x/samsung-brand-logo-phone-symbol-name-white-design-south-korean-mobile-illustration-with-blue-background-free-vector.jpg",width=120)
+    with col4:
+        st.image("https://i.pinimg.com/736x/eb/e5/42/ebe542236f9dc911005c816d004930eb.jpg",width=97.5)
+    with col5:
+        st.image("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ3qA2q06CGBiyE0j7cCg5lWlIRmENV_p6P7Q&s",width=97.5)
+
     state=st.selectbox("",state_value_cap_AOI)
     calling_appopens_vs_count=device_trend_state(state)
     
@@ -356,5 +371,59 @@ if add_radio1=="Recent User-Engagement Analyse District-Wise":
     page2_content(Content_text,side_text="left",color="#ffffff")
     a_choice=st.selectbox("",state_value_cap)
     calling_district_analyse=district_analyse_chart(a_choice)
+
+#----------------------------------------------------------------------------------------------------------------------
+
+if add_radio1=="User Trend":
+        state_select=st.selectbox("",state_value_cap_AOI,index=0)
+        col1,col2,col3=st.columns([1,1,1])
+        year1=[2018,2019,2020,2021,2022,2023,2024]
+
+        with col1:
+            cate2=st.selectbox("",["registered_user","appOpens","Average"],index=0)
+        with col2:
+            Y1_choice=st.selectbox("",year1,index=0,key="A")
+        if Y1_choice:
+            year2get = year1[year1.index(Y1_choice):]
+        with col3:
+            Y2_choice=st.selectbox("",year2get,index=0,key="B")
+
+        if cate2!="Average":
+            query_q_10=f"""select Year,Quarter,sum(registered_user) as registered_user,sum(appOpens) as appOpens from aggr_user
+                        where year>={Y1_choice} and year<={Y2_choice} and State="{state_select}"
+                        group by Year,Quarter 
+                        order by Year,Quarter;""" if state_select!="ALL OVER INDIA" else f"""select Year,Quarter,
+                        sum(registered_user) as registered_user,
+                        sum(appOpens) as appOpens from aggr_user
+                        where year>={Y1_choice} and year<={Y2_choice}
+                        group by Year,Quarter 
+                        order by Year,Quarter;"""
+        else:
+            query_q_10=f"""select Year,Quarter,sum(appOpens)/sum(registered_user) as Average from aggr_user
+                        where year>={Y1_choice} and year<={Y2_choice} and State="{state_select}"
+                        group by Year,Quarter 
+                        order by Year,Quarter;""" if state_select!="ALL OVER INDIA" else f"""select Year,Quarter,
+                        sum(appOpens)/sum(registered_user) as Average from aggr_user
+                        where year>={Y1_choice} and year<={Y2_choice}
+                        group by Year,Quarter 
+                        order by Year,Quarter;"""
+            
+        cursor.execute(query_q_10)
+        q_10 = pd.read_sql(query_q_10, connection)
+        df_10=pd.DataFrame(q_10)
+        df_10["Quarter"]=df_10["Year"].astype(str)+"q"+df_10["Quarter"].astype(str)
+        if cate2:
+            fig10=px.line(df_10,
+                        x="Quarter",
+                        y=f"{cate2}",
+                        markers=False)
+
+        call_tab_color=page2_tab_color()
+        tab1, tab2 = st.tabs(["Chart", "Data"])
+        with tab1:
+            st.plotly_chart(fig10)
+        tab2.write(df_10)
+
+#----------------------------------------------------------------------------------------------------------------------
 
 page2_footer()
